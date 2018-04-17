@@ -25,18 +25,28 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use InvalidArgumentException;
+use function stream_context_create;
+use function urlencode;
+use function mb_strlen;
+use function array_push;
+use function http_build_query;
+
 class RestApiImpl extends OAuth2HttpClient
 {
+    const WORKFLOW_ID_LENGTH = 16;
+    const JOB_ID_LENGTH = 16;
+
     private $urlInfo;
 
     public function __construct($clientId, $clientSecret, IOAuth2TokenManager $tokenManager = null, UrlInfo $urlInfo = null)
     {
-        if (0 === \mb_strlen($clientId, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('client ID is not specified');
+        if (StringUtils::isEmpty($clientId)) {
+            throw new InvalidArgumentException('client ID is not specified');
         }
 
-        if (0 === \mb_strlen($clientSecret, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('client secret is not specified');
+        if (StringUtils::isEmpty($clientSecret)) {
+            throw new InvalidArgumentException('client secret is not specified');
         }
 
         if (null === $tokenManager) {
@@ -54,23 +64,23 @@ class RestApiImpl extends OAuth2HttpClient
 
     public function validateWorkflowId($workflowId)
     {
-        if (0 === \mb_strlen($workflowId, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Workflow ID is not specified');
+        if (StringUtils::isEmpty($workflowId)) {
+            throw new InvalidArgumentException('Workflow ID is not specified');
         }
 
-        if (16 !== \mb_strlen($workflowId, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Workflow ID is invalid');
+        if (self::WORKFLOW_ID_LENGTH !== StringUtils::length($workflowId)) {
+            throw new InvalidArgumentException('Workflow ID is invalid');
         }
     }
 
     public function validateJobId($jobId)
     {
-        if (0 === \mb_strlen($jobId, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Job ID is not specified');
+        if (StringUtils::isEmpty($jobId)) {
+            throw new InvalidArgumentException('Job ID is not specified');
         }
 
-        if (16 !== \mb_strlen($jobId, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Job ID is invalid');
+        if (self::JOB_ID_LENGTH !== StringUtils::length($jobId)) {
+            throw new InvalidArgumentException('Job ID is invalid');
         }
     }
 
@@ -91,7 +101,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -118,7 +128,7 @@ class RestApiImpl extends OAuth2HttpClient
 
                 $workflowInfo = new WorkflowInfo($workflowId, $workflowName, $monitorFolder, $createdByUser);
 
-                \array_push($workflowList, $workflowInfo);
+                array_push($workflowList, $workflowInfo);
             }
 
             return $workflowList;
@@ -153,7 +163,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -195,13 +205,13 @@ class RestApiImpl extends OAuth2HttpClient
         $accessToken = $this->getAccessToken();
 
         $url = $this->getWorkflowsEndPoint() . '/' . $workflowId . '/jobs';
-        $url .= '?file=' . \urlencode($fileName);
+        $url .= '?file=' . urlencode($fileName);
         $url .= '&start=' . ($start ? 'true' : 'false');
         $url .= '&test=' . ($test ? 'true' : 'false');
 
         $httpHeader = 'Authorization: Bearer ' . $accessToken . static::CRLF;
         $httpHeader .= 'Accept: application/json; charset=utf-8' . static::CRLF;
-        $httpHeader .= 'Content-Length: ' . \mb_strlen($fileContents, '8bit') . static::CRLF;
+        $httpHeader .= 'Content-Length: ' . mb_strlen($fileContents, '8bit') . static::CRLF;
         $httpHeader .= 'Content-Type: ' . $fileType . static::CRLF;
 
         $options = array(
@@ -213,7 +223,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -244,18 +254,12 @@ class RestApiImpl extends OAuth2HttpClient
     public function uploadInputWithFileContents($jobId, $fileContents, $fileName, $autoRenewAccessToken)
     {
         $fileType = 'application/octet-stream';
-
-        //$finfo = finfo_open(FILEINFO_MIME_TYPE);
-        //$fileType = finfo_file($finfo, $filePath);
-        //finfo_close($finfo);
-
         $accessToken = $this->getAccessToken();
-
-        $url = $this->getJobsEndPoint() . '/' . $jobId . '/input/' . \urlencode($fileName);
+        $url = $this->getJobsEndPoint() . '/' . $jobId . '/input/' . urlencode($fileName);
 
         $httpHeader = 'Authorization: Bearer ' . $accessToken . static::CRLF;
         $httpHeader .= 'Accept: application/json; charset=utf-8' . static::CRLF;
-        $httpHeader .= 'Content-Length: ' . \mb_strlen($fileContents, '8bit') . static::CRLF;
+        $httpHeader .= 'Content-Length: ' . mb_strlen($fileContents, '8bit') . static::CRLF;
         $httpHeader .= 'Content-Type: ' . $fileType . static::CRLF;
 
         $options = array(
@@ -267,7 +271,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -294,10 +298,10 @@ class RestApiImpl extends OAuth2HttpClient
     {
         $accessToken = $this->getAccessToken();
 
-        $fileNameSpecified = \mb_strlen($fileName, Constraints::UTF_8) > 0;
+        $fileNameSpecified = StringUtils::length($fileName) > 0;
 
         $url = $this->getJobsEndPoint() . '/' . $jobId . '/output';
-        $url .= ($fileNameSpecified ? '/' . \urlencode($fileName) : '');
+        $url .= ($fileNameSpecified ? '/' . urlencode($fileName) : '');
         $url .= '?type=metadata';
 
         $httpHeader = 'Authorization: Bearer ' . $accessToken . static::CRLF;
@@ -310,7 +314,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -342,10 +346,10 @@ class RestApiImpl extends OAuth2HttpClient
     {
         $accessToken = $this->getAccessToken();
 
-        $fileNameSpecified = \mb_strlen($fileName, Constraints::UTF_8) > 0;
+        $fileNameSpecified = StringUtils::length($fileName) > 0;
 
         $url = $this->getJobsEndPoint() . '/' . $jobId . '/output';
-        $url .= ($fileNameSpecified ? '/' . \urlencode($fileName) : '');
+        $url .= ($fileNameSpecified ? '/' . urlencode($fileName) : '');
         $url .= '?type=file';
 
         $httpHeader = 'Authorization: Bearer ' . $accessToken . static::CRLF;
@@ -358,7 +362,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -369,18 +373,18 @@ class RestApiImpl extends OAuth2HttpClient
         if ($this->handleResponse($headers, $contents)) {
             $outputFileName = $fileName;
 
-            if (0 === \mb_strlen($outputFileName, Constraints::UTF_8)) {
+            if (0 === StringUtils::length($outputFileName)) {
                 if (isset($headers['content-disposition'])) {
                     $contentDisposition = $headers['content-disposition'];
                     $outputFileName = $this->getFileNameFromContentDisposisionHeader($contentDisposition);
 
-                    if (0 === \mb_strlen($outputFileName, Constraints::UTF_8)) {
+                    if (0 === StringUtils::length($outputFileName)) {
                         $outputFileName = 'output';
                     }
                 }
             }
 
-            $fileBytes = \mb_strlen($contents, '8bit');
+            $fileBytes = mb_strlen($contents, '8bit');
 
             $contentType = 'application/octet-stream';
             if (isset($headers['content-type'])) {
@@ -421,7 +425,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -453,7 +457,7 @@ class RestApiImpl extends OAuth2HttpClient
     {
         $accessToken = $this->getAccessToken();
 
-        $postData = \http_build_query(
+        $postData = http_build_query(
             array(
                 'operation' => ($start ? 'start' : 'stop'),
             )
@@ -463,7 +467,7 @@ class RestApiImpl extends OAuth2HttpClient
 
         $httpHeader = 'Authorization: Bearer ' . $accessToken . static::CRLF;
         $httpHeader .= 'Accept: application/json; charset=utf-8' . static::CRLF;
-        $httpHeader .= 'Content-Length: ' . \mb_strlen($postData, '8bit') . static::CRLF;
+        $httpHeader .= 'Content-Length: ' . mb_strlen($postData, '8bit') . static::CRLF;
         $httpHeader .= 'Content-Type: application/x-www-form-urlencoded' . static::CRLF;
 
         $options = array(
@@ -475,7 +479,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -515,7 +519,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -557,7 +561,7 @@ class RestApiImpl extends OAuth2HttpClient
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -567,7 +571,7 @@ class RestApiImpl extends OAuth2HttpClient
 
         if ($this->handleResponse($headers, $contents)) {
             $statusCode = $this->getStatusCodeFromResponse($headers);
-            if (202 === $statusCode) {
+            if (self::HTTP_ACCEPTED === $statusCode) {
                 // Job execution is not completed yet
                 return new JobInfo($jobId, '', false, JobInfo::STATUS_WAITING, 0, null);
             }
@@ -593,7 +597,7 @@ class RestApiImpl extends OAuth2HttpClient
 
     public static function getJobInfoStatusFromString($statusString)
     {
-        if (\mb_strlen($statusString, Constraints::UTF_8) > 0) {
+        if (StringUtils::length($statusString) > 0) {
             if ('waiting' === $statusString) {
                 return JobInfo::STATUS_WAITING;
             } elseif ('completed' === $statusString) {
@@ -649,7 +653,7 @@ class RestApiImpl extends OAuth2HttpClient
                         null
                     );
 
-                    \array_push($contents, $fileMetadataInner);
+                    array_push($contents, $fileMetadataInner);
                 }
             }
         }
@@ -675,7 +679,7 @@ class RestApiImpl extends OAuth2HttpClient
 
         if (isset($jsonResponse['detail'])) {
             $detailJson = $jsonResponse['detail'];
-            $errors = null;
+            $errors = array();
 
             if (isset($detailJson['apiCredits'])) {
                 $apiCreditsJson = $detailJson['apiCredits'];
@@ -708,7 +712,7 @@ class RestApiImpl extends OAuth2HttpClient
 
                     $error = new JobError($taskName, $fileName, $message, $detail, $extraDetail);
 
-                    \array_push($errors, $error);
+                    array_push($errors, $error);
                 }
             }
 

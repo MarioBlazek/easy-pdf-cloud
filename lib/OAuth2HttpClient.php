@@ -25,6 +25,11 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use function mb_strlen;
+use function http_build_query;
+use function stream_context_create;
+use function time;
+
 class OAuth2HttpClient extends HttpClientBase
 {
     private $clientId;
@@ -51,11 +56,11 @@ class OAuth2HttpClient extends HttpClientBase
             'scope' => 'epc.api',
         );
 
-        $postData = \http_build_query($data);
+        $postData = http_build_query($data);
 
         $httpHeader = 'Content-Type: application/x-www-form-urlencoded' . static::CRLF;
         $httpHeader .= 'Accept: application/json; charset=utf-8' . static::CRLF;
-        $httpHeader .= 'Content-Length: ' . \mb_strlen($postData, '8bit') . static::CRLF;
+        $httpHeader .= 'Content-Length: ' . mb_strlen($postData, '8bit') . static::CRLF;
 
         $options = array(
             'http' => array(
@@ -66,7 +71,7 @@ class OAuth2HttpClient extends HttpClientBase
             ),
         );
 
-        $context = \stream_context_create($options);
+        $context = stream_context_create($options);
 
         $httpResponse = $this->getHttpResponseFromUrl($url, $context);
         $http_response_header = $httpResponse['header'];
@@ -104,7 +109,7 @@ class OAuth2HttpClient extends HttpClientBase
                 $expiresIn -= 60;
             }
 
-            $expirationTime = \time() + $expiresIn;
+            $expirationTime = time() + $expiresIn;
 
             $tokenInfo = array(
                 'access_token' => $accessToken,
@@ -141,7 +146,7 @@ class OAuth2HttpClient extends HttpClientBase
 
         $expirationTime = $tokenInfo['expiration_time'];
 
-        $timeNow = \time();
+        $timeNow = time();
         if ($timeNow >= $expirationTime) {
             return $this->getNewAccessToken();
         }

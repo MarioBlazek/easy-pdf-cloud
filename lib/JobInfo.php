@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -33,14 +35,47 @@ class JobInfo
     const STATUS_FAILED = 3;
     const STATUS_CANCELLED = 4;
 
+    /**
+     * @var string
+     */
     private $jobId;
+
+    /**
+     * @var string
+     */
     private $workflowId;
+
+    /**
+     * @var bool
+     */
     private $finished;
+
+    /**
+     * @var int
+     */
     private $status;
+
+    /**
+     * @var int
+     */
     private $progress;
+
+    /**
+     * @var JobInfoDetail
+     */
     private $detail;
 
-    public function __construct($jobId, $workflowId, $finished, $status, $progress, JobInfoDetail $detail = null)
+    /**
+     * JobInfo constructor.
+     *
+     * @param string $jobId
+     * @param string $workflowId
+     * @param bool $finished
+     * @param int $status
+     * @param int $progress
+     * @param JobInfoDetail|null $detail
+     */
+    public function __construct(string $jobId, string $workflowId, bool $finished, int $status, int $progress, ?JobInfoDetail $detail = null)
     {
         $this->jobId = $jobId;
         $this->workflowId = $workflowId;
@@ -50,32 +85,50 @@ class JobInfo
         $this->detail = $detail;
     }
 
-    public function getJobId()
+    /**
+     * @return string
+     */
+    public function getJobId(): string
     {
         return $this->jobId;
     }
 
+    /**
+     * @return string
+     */
     public function getWorkflowId()
     {
         return $this->workflowId;
     }
 
-    public function getStatus()
+    /**
+     * @return int
+     */
+    public function getStatus(): int
     {
         return $this->status;
     }
 
-    public function getFinished()
+    /**
+     * @return bool
+     */
+    public function getFinished(): bool
     {
         return $this->finished;
     }
 
-    public function getProgress()
+    /**
+     * @return int
+     */
+    public function getProgress(): int
     {
         return $this->progress;
     }
 
-    public function getDetail()
+    /**
+     * @return JobInfoDetail|null
+     */
+    public function getDetail(): ?JobInfoDetail
     {
         return $this->detail;
     }

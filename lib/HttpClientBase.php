@@ -42,6 +42,12 @@ class HttpClientBase
 {
     const CRLF = "\r\n";
 
+    const HTTP_OK = 200;
+    const HTTP_ACCEPTED = 202;
+    const HTTP_MULTIPLE_CHOICES = 300;
+    const HTTP_BAD_REQUEST = 400;
+    const HTTP_UNAUTHORIZED = 401;
+
     protected function stringStartsWith($source, $subString)
     {
         return 0 === mb_strpos($source, $subString, 0, Constraints::UTF_8);
@@ -49,8 +55,8 @@ class HttpClientBase
 
     protected function stringEndsWith($source, $subString)
     {
-        $sourceLength = mb_strlen($source, Constraints::UTF_8);
-        $subStringLength = mb_strlen($subString, Constraints::UTF_8);
+        $sourceLength = StringUtils::length($source);
+        $subStringLength = StringUtils::length($subString);
         $subStringIndex = $sourceLength - $subStringLength;
 
         if ($subStringLength < 0) {
@@ -159,7 +165,7 @@ class HttpClientBase
     {
         $statusCode = $this->getStatusCodeFromResponse($headers);
 
-        return $statusCode >= 200 && $statusCode < 300;
+        return $statusCode >= self::HTTP_OK && $statusCode < self::HTTP_MULTIPLE_CHOICES;
     }
 
     protected function getFileNameFromContentDisposisionHeader($contentDisposition)
@@ -240,7 +246,7 @@ class HttpClientBase
         foreach ($spaceSeparatedList as $item) {
             $separatedList = array_map('trim', explode(',', $item));
 
-            if (\count($separatedList) >= 2) {
+            if (count($separatedList) >= 2) {
                 $commaSeparatedList = array_merge($commaSeparatedList, $separatedList);
             }
         }
@@ -248,7 +254,7 @@ class HttpClientBase
         foreach ($commaSeparatedList as $item) {
             $separatedList = array_map('trim', explode('=', $item, 2));
 
-            if (\count($separatedList) >= 2) {
+            if (count($separatedList) >= 2) {
                 $nameLC = mb_strtolower(trim($separatedList[0]), Constraints::UTF_8);
                 $value = urldecode(trim(trim($separatedList[1]), '"'));
 
@@ -263,7 +269,7 @@ class HttpClientBase
     {
         $statusCode = $this->getStatusCodeFromResponse($headers);
 
-        if (400 !== $statusCode && 401 !== $statusCode) {
+        if (self::HTTP_BAD_REQUEST !== $statusCode && self::HTTP_UNAUTHORIZED !== $statusCode) {
             return;
         }
 

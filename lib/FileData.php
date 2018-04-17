@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -27,12 +29,35 @@ namespace Bcl\EasyPdfCloud;
 
 class FileData
 {
+    /**
+     * @var string
+     */
     private $name;
+
+    /**
+     * @var string
+     */
     private $contents;
+
+    /**
+     * @var int
+     */
     private $bytes;
+
+    /**
+     * @var string
+     */
     private $contentType;
 
-    public function __construct($fileName, $contents, $bytes, $contentType)
+    /**
+     * FileData constructor.
+     *
+     * @param string $fileName
+     * @param string $contents
+     * @param int $bytes
+     * @param string $contentType
+     */
+    public function __construct(string $fileName, string $contents, int $bytes, string $contentType)
     {
         $this->name = $fileName;
         $this->contents = $contents;
@@ -40,22 +65,34 @@ class FileData
         $this->contentType = $contentType;
     }
 
-    public function getName()
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getContents()
+    /**
+     * @return string
+     */
+    public function getContents(): string
     {
         return $this->contents;
     }
 
-    public function getBytes()
+    /**
+     * @return int
+     */
+    public function getBytes(): int
     {
         return $this->bytes;
     }
 
-    public function getContentType()
+    /**
+     * @return string
+     */
+    public function getContentType(): string
     {
         return $this->contentType;
     }

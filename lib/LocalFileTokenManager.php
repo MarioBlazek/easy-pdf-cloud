@@ -74,14 +74,12 @@ class LocalFileTokenManager implements IOAuth2TokenManager
                 }
             } catch (Exception $e) {
                 unlink($this->filePath);
-            }
-
-            $lock->unlock();
-            unset($lock);
-
-            if (isset($e)) {
                 throw $e;
+            } finally {
+                $lock->unlock();
+                unset($lock);
             }
+
         }
 
         return $this->tokenInfo;
@@ -97,13 +95,10 @@ class LocalFileTokenManager implements IOAuth2TokenManager
             $serialized = serialize($tokenInfo);
             file_put_contents($this->filePath, $serialized);
         } catch (Exception $e) {
-        }
-
-        $lock->unlock();
-        unset($lock);
-
-        if (isset($e)) {
             throw $e;
+        } finally {
+            $lock->unlock();
+            unset($lock);
         }
     }
 }

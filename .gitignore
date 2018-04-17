@@ -19,3 +19,4 @@
 
 .php_cs.cache
 /.idea
+/samples/output

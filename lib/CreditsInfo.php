@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -27,21 +29,40 @@ namespace Bcl\EasyPdfCloud;
 
 class CreditsInfo
 {
+    /**
+     * @var int
+     */
     private $creditsRemaining;
+
+    /**
+     * @var bool
+     */
     private $notEnoughCredits;
 
-    public function __construct($creditsRemaining, $notEnoughCredits)
+    /**
+     * CreditsInfo constructor.
+     *
+     * @param int $creditsRemaining
+     * @param bool $notEnoughCredits
+     */
+    public function __construct(int $creditsRemaining, bool $notEnoughCredits)
     {
         $this->creditsRemaining = $creditsRemaining;
         $this->notEnoughCredits = $notEnoughCredits;
     }
 
-    public function getCreditsRemaining()
+    /**
+     * @return int
+     */
+    public function getCreditsRemaining(): int
     {
         return $this->creditsRemaining;
     }
 
-    public function getNotEnoughCredits()
+    /**
+     * @return bool
+     */
+    public function getNotEnoughCredits(): bool
     {
         return $this->notEnoughCredits;
     }

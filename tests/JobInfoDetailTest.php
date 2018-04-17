@@ -12,7 +12,7 @@ class JobInfoDetailTest extends TestCase
 
         $this->assertNull($info->getApiCredits());
         $this->assertNull($info->getOcrCredits());
-        $this->assertNull($info->getErrors());
+        $this->assertTrue(is_array($info->getErrors()));
     }
 
     public function testGetters()
@@ -24,7 +24,7 @@ class JobInfoDetailTest extends TestCase
 
         $this->assertSame($credits1, $info->getApiCredits());
         $this->assertSame($credits2, $info->getOcrCredits());
-        $this->assertNull($info->getErrors());
+        $this->assertTrue(is_array($info->getErrors()));
     }
 
     public function testGettersWithErrors()

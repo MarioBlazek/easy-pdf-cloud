@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -27,28 +29,55 @@ namespace Bcl\EasyPdfCloud;
 
 class JobInfoDetail
 {
+    /**
+     * @var CreditsInfo|null
+     */
     private $apiCredits;
+
+    /**
+     * @var CreditsInfo|null
+     */
     private $ocrCredits;
+
+    /**
+     * @var array
+     */
     private $errors;
 
-    public function __construct(CreditsInfo $apiCredits = null, CreditsInfo $ocrCredits = null, array $errors = null)
+    /**
+     * JobInfoDetail constructor.
+     *
+     * @param CreditsInfo|null $apiCredits
+     * @param CreditsInfo|null $ocrCredits
+     * @param array $errors
+     */
+    public function __construct(?CreditsInfo $apiCredits = null, ?CreditsInfo $ocrCredits = null, array $errors = [])
     {
         $this->apiCredits = $apiCredits;
         $this->ocrCredits = $ocrCredits;
         $this->errors = $errors;
     }
 
-    public function getApiCredits()
+    /**
+     * @return CreditsInfo|null
+     */
+    public function getApiCredits(): ?CreditsInfo
     {
         return $this->apiCredits;
     }
 
-    public function getOcrCredits()
+    /**
+     * @return CreditsInfo|null
+     */
+    public function getOcrCredits(): ?CreditsInfo
     {
         return $this->ocrCredits;
     }
 
-    public function getErrors()
+    /**
+     * @return array
+     */
+    public function getErrors(): array
     {
         return $this->errors;
     }

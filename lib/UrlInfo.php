@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -25,36 +27,53 @@
 
 namespace Bcl\EasyPdfCloud;
 
-use function mb_strlen;
-
 class UrlInfo
 {
     const AUTHORIZATION_SERVER_ENDPOINT = 'https://www.easypdfcloud.com/oauth2';
     const RESOURCE_SERVER_ENDPOINT = 'https://api.easypdfcloud.com/v1';
 
+    /**
+     * @var string
+     */
     private $oauth2BaseUrl;
+
+    /**
+     * @var string
+     */
     private $apiBaseUrl;
 
-    public function __construct($oauth2BaseUrl = null, $apiBaseUrl = null)
+    /**
+     * UrlInfo constructor.
+     *
+     * @param null|string $oauth2BaseUrl
+     * @param null|string $apiBaseUrl
+     */
+    public function __construct(?string $oauth2BaseUrl = null, ?string $apiBaseUrl = null)
     {
         $this->oauth2BaseUrl = $oauth2BaseUrl;
         $this->apiBaseUrl = $apiBaseUrl;
 
-        if (0 === mb_strlen($this->oauth2BaseUrl, Constraints::UTF_8)) {
+        if (StringUtils::isEmpty($this->oauth2BaseUrl)) {
             $this->oauth2BaseUrl = static::AUTHORIZATION_SERVER_ENDPOINT;
         }
 
-        if (0 === mb_strlen($this->apiBaseUrl, Constraints::UTF_8)) {
+        if (StringUtils::isEmpty($this->apiBaseUrl)) {
             $this->apiBaseUrl = static::RESOURCE_SERVER_ENDPOINT;
         }
     }
 
-    public function getOAuth2BaseUrl()
+    /**
+     * @return string
+     */
+    public function getOAuth2BaseUrl(): string
     {
         return $this->oauth2BaseUrl;
     }
 
-    public function getApiBaseUrl()
+    /**
+     * @return string
+     */
+    public function getApiBaseUrl(): string
     {
         return $this->apiBaseUrl;
     }

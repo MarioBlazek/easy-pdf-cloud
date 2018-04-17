@@ -25,8 +25,16 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use InvalidArgumentException;
+use function is_file;
+use function basename;
+use function file_get_contents;
+
 class RestApi
 {
+    /**
+     * @var RestApiImpl
+     */
     private $impl;
 
     public function __construct($clientId, $clientSecret, IOAuth2TokenManager $tokenManager = null, UrlInfo $urlInfo = null)
@@ -53,20 +61,11 @@ class RestApi
     {
         $this->impl->validateWorkflowId($workflowId);
 
-        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Input file is not specified');
-        }
+        $this->validateFilePath($filePath);
 
-        if (false === \is_file($filePath)) {
-            throw new \InvalidArgumentException('Input file does not exist');
-        }
+        $fileName = basename($filePath);
 
-        $fileName = \basename($filePath);
-
-        $fileContents = @\file_get_contents($filePath);
-        if (false === $fileContents) {
-            throw new \InvalidArgumentException('Unable to open input file');
-        }
+        $fileContents = $this->getFileContents($filePath);
 
         return $this->impl->createNewJobWithFileContents($workflowId, $fileContents, $fileName, $start, $test, true);
     }
@@ -76,22 +75,10 @@ class RestApi
     {
         $this->impl->validateWorkflowId($workflowId);
 
-        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Input file is not specified');
-        }
+        $this->validateFilePath($filePath);
+        $this->validateFileName($fileName);
 
-        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('File name is not specified');
-        }
-
-        if (false === \is_file($filePath)) {
-            throw new \InvalidArgumentException('Input file does not exist');
-        }
-
-        $fileContents = @\file_get_contents($filePath);
-        if (false === $fileContents) {
-            throw new \InvalidArgumentException('Unable to open input file');
-        }
+        $fileContents = $this->getFileContents($filePath);
 
         return $this->impl->createNewJobWithFileContents($workflowId, $fileContents, $fileName, $start, $test, true);
     }
@@ -101,13 +88,8 @@ class RestApi
     {
         $this->impl->validateWorkflowId($workflowId);
 
-        if (null === $fileContents || false === $fileContents) {
-            throw new \InvalidArgumentException('Input file is not specified');
-        }
-
-        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('File name is not specified');
-        }
+        $this->validateInputFile($fileContents);
+        $this->validateFileName($fileName);
 
         return $this->impl->createNewJobWithFileContents($workflowId, $fileContents, $fileName, $start, $test, true);
     }
@@ -117,20 +99,11 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Input file is not specified');
-        }
+        $this->validateFilePath($filePath);
 
-        if (false === \is_file($filePath)) {
-            throw new \InvalidArgumentException('Input file does not exist');
-        }
+        $fileName = basename($filePath);
 
-        $fileName = \basename($filePath);
-
-        $fileContents = \file_get_contents($filePath);
-        if (false === $fileContents) {
-            throw new \InvalidArgumentException('Unable to open input file');
-        }
+        $fileContents = $this->getFileContents($filePath);
 
         return $this->impl->uploadInputWithFileContents($jobId, $fileContents, $fileName, true);
     }
@@ -140,22 +113,10 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('Input file is not specified');
-        }
+        $this->validateFilePath($filePath);
+        $this->validateFileName($fileName);
 
-        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('File name is not specified');
-        }
-
-        if (false === \is_file($filePath)) {
-            throw new \InvalidArgumentException('Input file does not exist');
-        }
-
-        $fileContents = \file_get_contents($filePath);
-        if (false === $fileContents) {
-            throw new \InvalidArgumentException('Unable to open input file');
-        }
+        $fileContents = $this->getFileContents($filePath);
 
         return $this->impl->uploadInputWithFileContents($jobId, $fileContents, $fileName, true);
     }
@@ -165,13 +126,8 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (null === $fileContents || false === $fileContents) {
-            throw new \InvalidArgumentException('Input file is not specified');
-        }
-
-        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('File name is not specified');
-        }
+        $this->validateInputFile($fileContents);
+        $this->validateFileName($fileName);
 
         return $this->impl->uploadInputWithFileContents($jobId, $fileContents, $fileName, true);
     }
@@ -189,9 +145,7 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('File name is not specified');
-        }
+        $this->validateFileName($fileName);
 
         return $this->impl->getOutputInfoForFileName($jobId, $fileName, true);
     }
@@ -209,9 +163,7 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
-            throw new \InvalidArgumentException('File name is not specified');
-        }
+        $this->validateFileName($fileName);
 
         return $this->impl->downloadOutputForFileName($jobId, $fileName, true);
     }
@@ -254,5 +206,40 @@ class RestApi
         $this->impl->validateJobId($jobId);
 
         return $this->impl->waitForJobEvent($jobId, true);
+    }
+
+    protected function validateFilePath($filePath)
+    {
+        if (StringUtils::isEmpty($filePath)) {
+            throw new InvalidArgumentException('Input file is not specified');
+        }
+
+        if (false === is_file($filePath)) {
+            throw new InvalidArgumentException('Input file does not exist');
+        }
+    }
+
+    protected function validateFileName($fileName)
+    {
+        if (StringUtils::isEmpty($fileName)) {
+            throw new InvalidArgumentException('File name is not specified');
+        }
+    }
+
+    protected function getFileContents($filePath)
+    {
+        $fileContents = file_get_contents($filePath);
+        if (false === $fileContents) {
+            throw new InvalidArgumentException('Unable to open input file');
+        }
+
+        return $fileContents;
+    }
+
+    protected function validateInputFile($fileContents)
+    {
+        if (null === $fileContents || false === $fileContents) {
+            throw new InvalidArgumentException('Input file is not specified');
+        }
     }
 }
