@@ -1,0 +1,26 @@
+filter:
+    paths:
+        - "lib/*"
+    excluded_paths:
+        - 'tests/'
+        - 'doc/'
+        - 'build/'
+        - 'vendor/'
+
+checks:
+    php: true
+
+build:
+    environment:
+        php:
+            version: 7.1
+    tests:
+        override:
+            -
+                command: 'vendor/bin/phpunit --coverage-clover=coverage'
+                coverage:
+                    file: 'coverage'
+                    format: 'clover'
+
+tools:
+    external_code_coverage: false
