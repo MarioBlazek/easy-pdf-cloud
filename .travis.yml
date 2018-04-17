@@ -1,0 +1,63 @@
+# specify language to use
+language: php
+
+# select build environment
+# Ubuntu Trusty
+# container based
+# 4GB max, 2 cores
+dist: trusty
+sudo: false
+
+# which directories should be cached
+cache:
+    directories:
+        - $HOME/.composer/cache/files
+        - vendor
+
+matrix:
+    # mark as finished before allow_failures are run
+    fast_finish: true
+    include:
+        - php: 7.0
+          env: CONFIG=""
+        - php: 7.1
+          env: CONFIG=""
+        - php: 7.2
+          env: CONFIG=""
+        - php: nightly
+          env: CONFIG="--ignore-platform-reqs"
+    # nightly can fail
+    allow_failures:
+        - php: nightly
+
+# test only master (+ pull requests)
+branches:
+  only:
+    - master
+
+# make sure to update composer to latest available version
+before_install:
+    - phpenv config-add travis.php.ini
+
+# install dependencies
+install:
+    - composer install $CONFIG
+
+# execute phpunit as the script command
+script:
+  - ./vendor/bin/phpunit -d memory_limit=-1 --colors -c phpunit.xml.dist --coverage-clover=clover.xml
+
+# disable mail notifications
+notification:
+  email: false
+
+# reduce depth (history) of git checkout
+git:
+  depth: 30
+
+# send coverage to codecov.io
+after_success:
+    # send coverage to codecov.io
+    - bash <(curl -s https://codecov.io/bash)
+    # sent test coverage to scrutinizer
+    #- wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover
