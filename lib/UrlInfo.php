@@ -40,11 +40,11 @@ class UrlInfo
         $this->oauth2BaseUrl = $oauth2BaseUrl;
         $this->apiBaseUrl = $apiBaseUrl;
 
-        if (0 === mb_strlen($this->oauth2BaseUrl, 'utf-8')) {
+        if (0 === mb_strlen($this->oauth2BaseUrl, Constraints::UTF_8)) {
             $this->oauth2BaseUrl = static::AUTHORIZATION_SERVER_ENDPOINT;
         }
 
-        if (0 === mb_strlen($this->apiBaseUrl, 'utf-8')) {
+        if (0 === mb_strlen($this->apiBaseUrl, Constraints::UTF_8)) {
             $this->apiBaseUrl = static::RESOURCE_SERVER_ENDPOINT;
         }
     }

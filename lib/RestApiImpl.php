@@ -31,11 +31,11 @@ class RestApiImpl extends OAuth2HttpClient
 
     public function __construct($clientId, $clientSecret, IOAuth2TokenManager $tokenManager = null, UrlInfo $urlInfo = null)
     {
-        if (0 === \mb_strlen($clientId, 'utf-8')) {
+        if (0 === \mb_strlen($clientId, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('client ID is not specified');
         }
 
-        if (0 === \mb_strlen($clientSecret, 'utf-8')) {
+        if (0 === \mb_strlen($clientSecret, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('client secret is not specified');
         }
 
@@ -54,22 +54,22 @@ class RestApiImpl extends OAuth2HttpClient
 
     public function validateWorkflowId($workflowId)
     {
-        if (0 === \mb_strlen($workflowId, 'utf-8')) {
+        if (0 === \mb_strlen($workflowId, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Workflow ID is not specified');
         }
 
-        if (16 !== \mb_strlen($workflowId, 'utf-8')) {
+        if (16 !== \mb_strlen($workflowId, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Workflow ID is invalid');
         }
     }
 
     public function validateJobId($jobId)
     {
-        if (0 === \mb_strlen($jobId, 'utf-8')) {
+        if (0 === \mb_strlen($jobId, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Job ID is not specified');
         }
 
-        if (16 !== \mb_strlen($jobId, 'utf-8')) {
+        if (16 !== \mb_strlen($jobId, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Job ID is invalid');
         }
     }
@@ -294,7 +294,7 @@ class RestApiImpl extends OAuth2HttpClient
     {
         $accessToken = $this->getAccessToken();
 
-        $fileNameSpecified = \mb_strlen($fileName, 'utf-8') > 0;
+        $fileNameSpecified = \mb_strlen($fileName, Constraints::UTF_8) > 0;
 
         $url = $this->getJobsEndPoint() . '/' . $jobId . '/output';
         $url .= ($fileNameSpecified ? '/' . \urlencode($fileName) : '');
@@ -342,7 +342,7 @@ class RestApiImpl extends OAuth2HttpClient
     {
         $accessToken = $this->getAccessToken();
 
-        $fileNameSpecified = \mb_strlen($fileName, 'utf-8') > 0;
+        $fileNameSpecified = \mb_strlen($fileName, Constraints::UTF_8) > 0;
 
         $url = $this->getJobsEndPoint() . '/' . $jobId . '/output';
         $url .= ($fileNameSpecified ? '/' . \urlencode($fileName) : '');
@@ -369,12 +369,12 @@ class RestApiImpl extends OAuth2HttpClient
         if ($this->handleResponse($headers, $contents)) {
             $outputFileName = $fileName;
 
-            if (0 === \mb_strlen($outputFileName, 'utf-8')) {
+            if (0 === \mb_strlen($outputFileName, Constraints::UTF_8)) {
                 if (isset($headers['content-disposition'])) {
                     $contentDisposition = $headers['content-disposition'];
                     $outputFileName = $this->getFileNameFromContentDisposisionHeader($contentDisposition);
 
-                    if (0 === \mb_strlen($outputFileName, 'utf-8')) {
+                    if (0 === \mb_strlen($outputFileName, Constraints::UTF_8)) {
                         $outputFileName = 'output';
                     }
                 }
@@ -593,7 +593,7 @@ class RestApiImpl extends OAuth2HttpClient
 
     public static function getJobInfoStatusFromString($statusString)
     {
-        if (\mb_strlen($statusString, 'utf-8') > 0) {
+        if (\mb_strlen($statusString, Constraints::UTF_8) > 0) {
             if ('waiting' === $statusString) {
                 return JobInfo::STATUS_WAITING;
             } elseif ('completed' === $statusString) {

@@ -65,7 +65,7 @@ class JobExecutionException extends Exception
 
         $message = $jobError->getMessage();
         $status = $jobInfo->getStatus();
-        if (0 === mb_strlen($message, 'utf-8')) {
+        if (0 === mb_strlen($message, Constraints::UTF_8)) {
             if (JobInfo::STATUS_FAILED === $status) {
                 return 'Job execution failed';
             } elseif (JobInfo::STATUS_CANCELLED === $status) {
@@ -76,14 +76,14 @@ class JobExecutionException extends Exception
         }
 
         $detail = $jobError->getDetail();
-        if (0 === mb_strlen($detail, 'utf-8')) {
+        if (0 === mb_strlen($detail, Constraints::UTF_8)) {
             return $message;
         }
 
         $string = $detail;
 
         $extraDetail = $jobError->getExtraDetail();
-        if (mb_strlen($extraDetail, 'utf-8') > 0) {
+        if (mb_strlen($extraDetail, Constraints::UTF_8) > 0) {
             $string .= ' (' . $extraDetail . ')';
         }
 

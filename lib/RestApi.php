@@ -53,7 +53,7 @@ class RestApi
     {
         $this->impl->validateWorkflowId($workflowId);
 
-        if (0 === \mb_strlen($filePath, 'utf-8')) {
+        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Input file is not specified');
         }
 
@@ -76,11 +76,11 @@ class RestApi
     {
         $this->impl->validateWorkflowId($workflowId);
 
-        if (0 === \mb_strlen($filePath, 'utf-8')) {
+        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Input file is not specified');
         }
 
-        if (0 === \mb_strlen($fileName, 'utf-8')) {
+        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('File name is not specified');
         }
 
@@ -105,7 +105,7 @@ class RestApi
             throw new \InvalidArgumentException('Input file is not specified');
         }
 
-        if (0 === \mb_strlen($fileName, 'utf-8')) {
+        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('File name is not specified');
         }
 
@@ -117,7 +117,7 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($filePath, 'utf-8')) {
+        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Input file is not specified');
         }
 
@@ -140,11 +140,11 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($filePath, 'utf-8')) {
+        if (0 === \mb_strlen($filePath, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('Input file is not specified');
         }
 
-        if (0 === \mb_strlen($fileName, 'utf-8')) {
+        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('File name is not specified');
         }
 
@@ -169,7 +169,7 @@ class RestApi
             throw new \InvalidArgumentException('Input file is not specified');
         }
 
-        if (0 === \mb_strlen($fileName, 'utf-8')) {
+        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('File name is not specified');
         }
 
@@ -189,7 +189,7 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($fileName, 'utf-8')) {
+        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('File name is not specified');
         }
 
@@ -209,7 +209,7 @@ class RestApi
     {
         $this->impl->validateJobId($jobId);
 
-        if (0 === \mb_strlen($fileName, 'utf-8')) {
+        if (0 === \mb_strlen($fileName, Constraints::UTF_8)) {
             throw new \InvalidArgumentException('File name is not specified');
         }
 

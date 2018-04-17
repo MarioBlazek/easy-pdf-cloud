@@ -62,7 +62,7 @@ class ApiAuthorizationException extends Exception
 
     private static function toString($statusCode, $error, $errorDescription)
     {
-        $string = (mb_strlen($errorDescription, 'utf-8') > 0 ? $errorDescription : $error);
+        $string = (mb_strlen($errorDescription, Constraints::UTF_8) > 0 ? $errorDescription : $error);
         $string .= ' (HTTP status code: ' . $statusCode . ')';
 
         return $string;

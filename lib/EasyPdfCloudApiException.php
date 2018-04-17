@@ -62,7 +62,7 @@ class EasyPdfCloudApiException extends Exception
 
     private static function toString($statusCode, $reasonPhrase, $reasonDetail)
     {
-        $string = (mb_strlen($reasonDetail, 'utf-8') > 0 ? $reasonDetail : $reasonPhrase);
+        $string = (mb_strlen($reasonDetail, Constraints::UTF_8) > 0 ? $reasonDetail : $reasonPhrase);
         $string .= ' (HTTP status code: ' . $statusCode . ')';
 
         return $string;
