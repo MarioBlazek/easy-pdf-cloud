@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -25,16 +27,42 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use Exception;
+use InvalidArgumentException;
+use function count;
+use function basename;
+use function pathinfo;
+
 class Client
 {
+    /**
+     * @var RestApi
+     */
     private $restApi;
 
-    public function __construct($clientId, $clientSecret, IOAuth2TokenManager $tokenManager = null, UrlInfo $urlInfo = null)
+    /**
+     * Client constructor.
+     *
+     * @param string $clientId
+     * @param string $clientSecret
+     * @param IOAuth2TokenManager|null $tokenManager
+     * @param UrlInfo|null $urlInfo
+     */
+    public function __construct(string $clientId, string $clientSecret, IOAuth2TokenManager $tokenManager = null, UrlInfo $urlInfo = null)
     {
         $this->restApi = new RestApi($clientId, $clientSecret, $tokenManager, $urlInfo);
     }
 
-    public function startNewJobWithFilePath($workflowId, $filePath, $enableTestMode = false)
+    /**
+     * Starts new job from file located in given path
+     *
+     * @param string $workflowId
+     * @param string $filePath
+     * @param bool $enableTestMode
+     *
+     * @return Job
+     */
+    public function startNewJobWithFilePath(string $workflowId, string $filePath, bool $enableTestMode = false): Job
     {
         $restApi = $this->restApi;
 
@@ -43,7 +71,18 @@ class Client
         return new Job($restApi, $jobId);
     }
 
-    public function startNewJobWithFilePathAndName($workflowId, $filePath, $fileName, $enableTestMode = false)
+    /**
+     * Starts new job from file located in given path
+     * also specifies name for result file
+     *
+     * @param string $workflowId
+     * @param string $filePath
+     * @param string $fileName
+     * @param bool $enableTestMode
+     *
+     * @return Job
+     */
+    public function startNewJobWithFilePathAndName(string $workflowId, string $filePath, string $fileName, bool $enableTestMode = false): Job
     {
         $restApi = $this->restApi;
 
@@ -52,7 +91,18 @@ class Client
         return new Job($restApi, $jobId);
     }
 
-    public function startNewJobWithFileContents($workflowId, $fileContents, $fileName, $enableTestMode = false)
+    /**
+     * Starts new job with given contents
+     * and custom result file name
+     *
+     * @param string $workflowId
+     * @param string $fileContents
+     * @param string $fileName
+     * @param bool $enableTestMode
+     *
+     * @return Job
+     */
+    public function startNewJobWithFileContents(string $workflowId, string $fileContents, string $fileName, bool $enableTestMode = false): Job
     {
         $restApi = $this->restApi;
 
@@ -61,23 +111,34 @@ class Client
         return new Job($restApi, $jobId);
     }
 
-    public function startNewJobForMergeTask($workflowId, array $filePaths, $enableTestMode = false)
+    /**
+     * Starts new job that merges multiple file
+     * into result file
+     *
+     * @param string $workflowId
+     * @param array $filePaths
+     * @param bool $enableTestMode
+     * @return Job
+     *
+     * @throws Exception
+     */
+    public function startNewJobForMergeTask(string $workflowId, array $filePaths, bool $enableTestMode = false): Job
     {
         $restApi = $this->restApi;
 
-        $filesCount = \count($filePaths);
+        $filesCount = count($filePaths);
 
         if (0 === $filesCount) {
-            throw new \InvalidArgumentException('No input files specified');
+            throw new InvalidArgumentException('No input files specified');
         }
 
         $filePath = $filePaths[0];
 
         if (1 === $filesCount) {
-            return $this->startNewJob($workflowId, $filePath);
+            return $this->startNewJobWithFilePath($workflowId, $filePath);
         }
 
-        $fileName = \basename($filePath);
+        $fileName = basename($filePath);
 
         $fileNameMap = array();
         $fileNameMap[$fileName] = true;
@@ -87,9 +148,9 @@ class Client
         try {
             for ($i = 1; $i < $filesCount; ++$i) {
                 $filePath = $filePaths[$i];
-                $fileName = \basename($filePath);
+                $fileName = basename($filePath);
 
-                $pathInfo = \pathinfo($filePath);
+                $pathInfo = pathinfo($filePath);
                 $fName = (isset($pathInfo['filename']) ? $pathInfo['filename'] : '');
                 $fExt = (isset($pathInfo['extension']) ? $pathInfo['extension'] : '');
 
@@ -105,10 +166,10 @@ class Client
             }
 
             $restApi->startJob($jobId);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             try {
                 $restApi->deleteJob($jobId);
-            } catch (\Exception $eInner) {
+            } catch (Exception $eInner) {
             }
 
             throw $e;

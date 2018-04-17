@@ -1,8 +1,11 @@
 <?php
 
-namespace Bcl\EasyPdfCloud;
+namespace Bcl\EasyPdfCloud\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Bcl\EasyPdfCloud\JobInfo;
+use Bcl\EasyPdfCloud\FileData;
+use Bcl\EasyPdfCloud\JobExecutionResult;
 
 class JobExecutionResultTest extends TestCase
 {

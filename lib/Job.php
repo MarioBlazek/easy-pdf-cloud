@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -29,10 +31,23 @@ use Exception;
 
 class Job
 {
+    /**
+     * @var RestApi
+     */
     private $restApi;
+
+    /**
+     * @var string
+     */
     private $jobId;
 
-    public function __construct(RestApi $restApi, $jobId)
+    /**
+     * Job constructor.
+     *
+     * @param RestApi $restApi
+     * @param string $jobId
+     */
+    public function __construct(RestApi $restApi, string $jobId)
     {
         $this->restApi = $restApi;
         $this->jobId = $jobId;
@@ -54,12 +69,20 @@ class Job
         }
     }
 
-    public function getJobId()
+    /**
+     * @return string
+     */
+    public function getJobId(): string
     {
         return $this->jobId;
     }
 
-    public function waitForJobExecutionCompletion()
+    /**
+     * @return JobExecutionResult
+     *
+     * @throws JobExecutionException
+     */
+    public function waitForJobExecutionCompletion(): JobExecutionResult
     {
         $restApi = $this->restApi;
         $jobId = $this->jobId;
@@ -83,7 +106,7 @@ class Job
         return new JobExecutionResult($jobInfo, $fileData);
     }
 
-    public function cancelJobExecution()
+    public function cancelJobExecution(): void
     {
         $restApi = $this->restApi;
         $jobId = $this->jobId;

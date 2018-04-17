@@ -1,8 +1,10 @@
 <?php
 
-namespace Bcl\EasyPdfCloud;
+namespace Bcl\EasyPdfCloud\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Bcl\EasyPdfCloud\JobInfoDetail;
+use Bcl\EasyPdfCloud\CreditsInfo;
 
 class JobInfoDetailTest extends TestCase
 {

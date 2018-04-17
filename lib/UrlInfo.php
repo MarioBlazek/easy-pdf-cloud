@@ -48,7 +48,7 @@ class UrlInfo
      * @param null|string $oauth2BaseUrl
      * @param null|string $apiBaseUrl
      */
-    public function __construct(?string $oauth2BaseUrl = null, ?string $apiBaseUrl = null)
+    public function __construct(string $oauth2BaseUrl = '', string $apiBaseUrl = '')
     {
         $this->oauth2BaseUrl = $oauth2BaseUrl;
         $this->apiBaseUrl = $apiBaseUrl;

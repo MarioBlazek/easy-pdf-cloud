@@ -21,7 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Bcl\\EasyPdfCloud\\": "tests"
+            "Bcl\\EasyPdfCloud\\Tests\\": "tests"
         }
     },
     "require": {

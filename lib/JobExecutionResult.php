@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -27,21 +29,40 @@ namespace Bcl\EasyPdfCloud;
 
 class JobExecutionResult
 {
+    /**
+     * @var JobInfo
+     */
     private $jobInfo;
+
+    /**
+     * @var FileData
+     */
     private $fileData;
 
+    /**
+     * JobExecutionResult constructor.
+     *
+     * @param JobInfo $jobInfo
+     * @param FileData $fileData
+     */
     public function __construct(JobInfo $jobInfo, FileData $fileData)
     {
         $this->jobInfo = $jobInfo;
         $this->fileData = $fileData;
     }
 
-    public function getJobInfo()
+    /**
+     * @return JobInfo
+     */
+    public function getJobInfo(): JobInfo
     {
         return $this->jobInfo;
     }
 
-    public function getFileData()
+    /**
+     * @return FileData
+     */
+    public function getFileData(): FileData
     {
         return $this->fileData;
     }

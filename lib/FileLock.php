@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -32,9 +34,19 @@ use function fclose;
 
 class FileLock
 {
+    /**
+     * @var resource
+     */
     private $file;
 
-    public function __construct($lockFilePath)
+    /**
+     * FileLock constructor.
+     *
+     * @param string $lockFilePath
+     *
+     * @throws RuntimeException
+     */
+    public function __construct(string $lockFilePath)
     {
         $this->file = null;
 
@@ -56,7 +68,7 @@ class FileLock
         $this->unlock();
     }
 
-    public function unlock()
+    public function unlock(): void
     {
         $file = $this->file;
         $this->file = null;

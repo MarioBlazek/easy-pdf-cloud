@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -27,13 +29,41 @@ namespace Bcl\EasyPdfCloud;
 
 class JobError
 {
+    /**
+     * @var string
+     */
     private $taskName;
+
+    /**
+     * @var string
+     */
     private $fileName;
+
+    /**
+     * @var string
+     */
     private $message;
+
+    /**
+     * @var string
+     */
     private $detail;
+
+    /**
+     * @var string
+     */
     private $extraDetail;
 
-    public function __construct($taskName, $fileName, $message, $detail, $extraDetail)
+    /**
+     * JobError constructor.
+     *
+     * @param string $taskName
+     * @param string $fileName
+     * @param string $message
+     * @param string $detail
+     * @param string $extraDetail
+     */
+    public function __construct(string $taskName, string $fileName, string $message, string $detail, string $extraDetail)
     {
         $this->taskName = $taskName;
         $this->fileName = $fileName;
@@ -42,27 +72,42 @@ class JobError
         $this->extraDetail = $extraDetail;
     }
 
-    public function getTaskName()
+    /**
+     * @return string
+     */
+    public function getTaskName(): string
     {
         return $this->taskName;
     }
 
-    public function getFileName()
+    /**
+     * @return string
+     */
+    public function getFileName(): string
     {
         return $this->fileName;
     }
 
-    public function getMessage()
+    /**
+     * @return string
+     */
+    public function getMessage(): string
     {
         return $this->message;
     }
 
-    public function getDetail()
+    /**
+     * @return string
+     */
+    public function getDetail(): string
     {
         return $this->detail;
     }
 
-    public function getExtraDetail()
+    /**
+     * @return string
+     */
+    public function getExtraDetail(): string
     {
         return $this->extraDetail;
     }

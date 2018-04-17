@@ -23,48 +23,9 @@
  * THE SOFTWARE.
  */
 
-namespace Bcl\EasyPdfCloud;
+namespace Bcl\EasyPdfCloud\Exception;
 
-use Exception;
-use function mb_strlen;
-
-class ApiAuthorizationException extends Exception
+class EasyPdfCloudApiException extends BaseException
 {
-    private $statusCode;
-    private $error;
-    private $errorDescription;
 
-    public function __construct($statusCode, $error, $errorDescription, $code = 0, Exception $previous = null)
-    {
-        $message = static::toString($statusCode, $error, $errorDescription);
-
-        parent::__construct($message, $code, $previous);
-
-        $this->statusCode = $statusCode;
-        $this->error = $error;
-        $this->errorDescription = $errorDescription;
-    }
-
-    public function getStatusCode()
-    {
-        return $this->statusCode;
-    }
-
-    public function getError()
-    {
-        return $this->error;
-    }
-
-    public function getErrorDescription()
-    {
-        return $this->errorDescription;
-    }
-
-    private static function toString($statusCode, $error, $errorDescription)
-    {
-        $string = (mb_strlen($errorDescription, Constraints::UTF_8) > 0 ? $errorDescription : $error);
-        $string .= ' (HTTP status code: ' . $statusCode . ')';
-
-        return $string;
-    }
 }

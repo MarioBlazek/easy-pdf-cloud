@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -23,48 +25,9 @@
  * THE SOFTWARE.
  */
 
-namespace Bcl\EasyPdfCloud;
+namespace Bcl\EasyPdfCloud\Exception;
 
-use Exception;
-use function mb_strlen;
-
-class EasyPdfCloudApiException extends Exception
+class ApiAuthorizationException extends BaseException
 {
-    private $statusCode;
-    private $reasonPhrase;
-    private $reasonDetail;
 
-    public function __construct($statusCode, $reasonPhrase, $reasonDetail = null, $code = 0, Exception $previous = null)
-    {
-        $message = static::toString($statusCode, $reasonPhrase, $reasonDetail);
-
-        parent::__construct($message, $code, $previous);
-
-        $this->statusCode = $statusCode;
-        $this->reasonPhrase = $reasonPhrase;
-        $this->reasonDetail = $reasonDetail;
-    }
-
-    public function getStatusCode()
-    {
-        return $this->statusCode;
-    }
-
-    public function getReasonPhrase()
-    {
-        return $this->reasonPhrase;
-    }
-
-    public function getReasonDetail()
-    {
-        return $this->reasonDetail;
-    }
-
-    private static function toString($statusCode, $reasonPhrase, $reasonDetail)
-    {
-        $string = (mb_strlen($reasonDetail, Constraints::UTF_8) > 0 ? $reasonDetail : $reasonPhrase);
-        $string .= ' (HTTP status code: ' . $statusCode . ')';
-
-        return $string;
-    }
 }

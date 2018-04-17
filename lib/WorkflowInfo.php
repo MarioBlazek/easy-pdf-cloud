@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * The MIT License
  *
@@ -27,12 +29,35 @@ namespace Bcl\EasyPdfCloud;
 
 class WorkflowInfo
 {
+    /**
+     * @var string
+     */
     private $workflowId;
+
+    /**
+     * @var string
+     */
     private $workflowName;
+
+    /**
+     * @var string
+     */
     private $monitorFolder;
+
+    /**
+     * @var string
+     */
     private $createdByUser;
 
-    public function __construct($workflowId, $workflowName, $monitorFolder, $createdByUser)
+    /**
+     * WorkflowInfo constructor.
+     *
+     * @param string $workflowId
+     * @param string $workflowName
+     * @param string $monitorFolder
+     * @param string $createdByUser
+     */
+    public function __construct(string $workflowId, string $workflowName, string $monitorFolder, string $createdByUser)
     {
         $this->workflowId = $workflowId;
         $this->workflowName = $workflowName;
@@ -40,22 +65,34 @@ class WorkflowInfo
         $this->createdByUser = $createdByUser;
     }
 
-    public function getWorkflowId()
+    /**
+     * @return string
+     */
+    public function getWorkflowId(): string
     {
         return $this->workflowId;
     }
 
-    public function getWorkflowName()
+    /**
+     * @return string
+     */
+    public function getWorkflowName(): string
     {
         return $this->workflowName;
     }
 
-    public function getMonitorFolder()
+    /**
+     * @return string
+     */
+    public function getMonitorFolder(): string
     {
         return $this->monitorFolder;
     }
 
-    public function getCreatedByUser()
+    /**
+     * @return string
+     */
+    public function getCreatedByUser(): string
     {
         return $this->createdByUser;
     }

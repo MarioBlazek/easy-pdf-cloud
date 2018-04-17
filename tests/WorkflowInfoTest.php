@@ -1,8 +1,9 @@
 <?php
 
-namespace Bcl\EasyPdfCloud;
+namespace Bcl\EasyPdfCloud\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Bcl\EasyPdfCloud\WorkflowInfo;
 
 class WorkflowInfoTest extends TestCase
 {
