@@ -25,6 +25,18 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use Exception;
+use function rtrim;
+use function sys_get_temp_dir;
+use function mkdir;
+use function is_dir;
+use function is_file;
+use function file_get_contents;
+use function file_put_contents;
+use function unserialize;
+use function serialize;
+use function unlink;
+
 class LocalFileTokenManager implements IOAuth2TokenManager
 {
     private $tokenInfo;
@@ -33,15 +45,15 @@ class LocalFileTokenManager implements IOAuth2TokenManager
 
     public function __construct($clientId)
     {
-        $tempDir = \rtrim(\sys_get_temp_dir(), DIRECTORY_SEPARATOR);
+        $tempDir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR);
 
         $tempFileDir = $tempDir;
         $tempFileDir .= DIRECTORY_SEPARATOR . 'easyPdfCloud';
         $tempFileDir .= DIRECTORY_SEPARATOR . 'clients';
         $tempFileDir .= DIRECTORY_SEPARATOR . $clientId;
 
-        if (false === \is_dir($tempFileDir)) {
-            \mkdir($tempFileDir, 0755, true);
+        if (false === is_dir($tempFileDir)) {
+            mkdir($tempFileDir, 0755, true);
         }
 
         $this->filePath = $tempFileDir . DIRECTORY_SEPARATOR . 'token.serialized';
@@ -50,18 +62,18 @@ class LocalFileTokenManager implements IOAuth2TokenManager
 
     public function loadTokenInfo()
     {
-        if (null === $this->tokenInfo && \is_file($this->filePath)) {
+        if (null === $this->tokenInfo && is_file($this->filePath)) {
             $lock = new FileLock($this->lockFilePath);
 
             try {
-                if (null === $this->tokenInfo && \is_file($this->filePath)) {
-                    $serialized = @\file_get_contents($this->filePath);
+                if (null === $this->tokenInfo && is_file($this->filePath)) {
+                    $serialized = @file_get_contents($this->filePath);
                     if (false !== $serialized) {
-                        $this->tokenInfo = \unserialize($serialized);
+                        $this->tokenInfo = unserialize($serialized);
                     }
                 }
-            } catch (\Exception $e) {
-                \unlink($this->filePath);
+            } catch (Exception $e) {
+                unlink($this->filePath);
             }
 
             $lock->unlock();
@@ -82,9 +94,9 @@ class LocalFileTokenManager implements IOAuth2TokenManager
         $lock = new FileLock($this->lockFilePath);
 
         try {
-            $serialized = \serialize($tokenInfo);
-            \file_put_contents($this->filePath, $serialized);
-        } catch (\Exception $e) {
+            $serialized = serialize($tokenInfo);
+            file_put_contents($this->filePath, $serialized);
+        } catch (Exception $e) {
         }
 
         $lock->unlock();

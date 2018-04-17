@@ -25,6 +25,11 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use RuntimeException;
+use function fopen;
+use function flock;
+use function fclose;
+
 class FileLock
 {
     private $file;
@@ -33,14 +38,14 @@ class FileLock
     {
         $this->file = null;
 
-        $file = \fopen($lockFilePath, 'a');
+        $file = fopen($lockFilePath, 'a');
         if (false === $file) {
-            throw new \RuntimeException('Unable to open the lock file');
+            throw new RuntimeException('Unable to open the lock file');
         }
 
-        if (false === \flock($file, LOCK_EX)) {
-            flose($file);
-            throw new \RuntimeException('Unable to lock the file');
+        if (false === flock($file, LOCK_EX)) {
+            fclose($file);
+            throw new RuntimeException('Unable to lock the file');
         }
 
         $this->file = $file;
@@ -57,8 +62,8 @@ class FileLock
         $this->file = null;
 
         if (null !== $file) {
-            \flock($file, LOCK_UN);
-            \fclose($file);
+            flock($file, LOCK_UN);
+            fclose($file);
         }
     }
 }

@@ -25,7 +25,10 @@
 
 namespace Bcl\EasyPdfCloud;
 
-class EasyPdfCloudApiException extends \Exception
+use Exception;
+use function mb_strlen;
+
+class EasyPdfCloudApiException extends Exception
 {
     private $statusCode;
     private $reasonPhrase;
@@ -59,7 +62,7 @@ class EasyPdfCloudApiException extends \Exception
 
     private static function toString($statusCode, $reasonPhrase, $reasonDetail)
     {
-        $string = (\mb_strlen($reasonDetail, 'utf-8') > 0 ? $reasonDetail : $reasonPhrase);
+        $string = (mb_strlen($reasonDetail, 'utf-8') > 0 ? $reasonDetail : $reasonPhrase);
         $string .= ' (HTTP status code: ' . $statusCode . ')';
 
         return $string;

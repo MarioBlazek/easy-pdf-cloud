@@ -25,6 +25,8 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use function mb_strlen;
+
 class UrlInfo
 {
     const AUTHORIZATION_SERVER_ENDPOINT = 'https://www.easypdfcloud.com/oauth2';
@@ -38,11 +40,11 @@ class UrlInfo
         $this->oauth2BaseUrl = $oauth2BaseUrl;
         $this->apiBaseUrl = $apiBaseUrl;
 
-        if (0 === \mb_strlen($this->oauth2BaseUrl, 'utf-8')) {
+        if (0 === mb_strlen($this->oauth2BaseUrl, 'utf-8')) {
             $this->oauth2BaseUrl = static::AUTHORIZATION_SERVER_ENDPOINT;
         }
 
-        if (0 === \mb_strlen($this->apiBaseUrl, 'utf-8')) {
+        if (0 === mb_strlen($this->apiBaseUrl, 'utf-8')) {
             $this->apiBaseUrl = static::RESOURCE_SERVER_ENDPOINT;
         }
     }

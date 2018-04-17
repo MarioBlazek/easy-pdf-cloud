@@ -25,6 +25,8 @@
 
 namespace Bcl\EasyPdfCloud;
 
+use Exception;
+
 class Job
 {
     private $restApi;
@@ -47,7 +49,7 @@ class Job
         if (null !== $restApi && null !== $jobId) {
             try {
                 $restApi->deleteJob($jobId);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
             }
         }
     }

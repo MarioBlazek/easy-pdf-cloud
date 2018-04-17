@@ -25,7 +25,11 @@
 
 namespace Bcl\EasyPdfCloud;
 
-class JobExecutionException extends \Exception
+use Exception;
+use function mb_strlen;
+use function count;
+
+class JobExecutionException extends Exception
 {
     private $jobInfo;
 
@@ -50,17 +54,18 @@ class JobExecutionException extends \Exception
         $jobDetail = $jobInfo->getDetail();
         if (null !== $jobDetail) {
             $jobErrors = $jobDetail->getErrors();
-            if (null !== $jobErrors && \count($jobErrors) > 0) {
+            if (null !== $jobErrors && count($jobErrors) > 0) {
                 $jobError = $jobErrors[0];
             }
         }
 
-        if (null === $jobError) {
+        if (!$jobError instanceof JobError) {
             return 'Job execution failed with unknown error';
         }
 
         $message = $jobError->getMessage();
-        if (0 === \mb_strlen($message, 'utf-8')) {
+        $status = $jobInfo->getStatus();
+        if (0 === mb_strlen($message, 'utf-8')) {
             if (JobInfo::STATUS_FAILED === $status) {
                 return 'Job execution failed';
             } elseif (JobInfo::STATUS_CANCELLED === $status) {
@@ -71,14 +76,14 @@ class JobExecutionException extends \Exception
         }
 
         $detail = $jobError->getDetail();
-        if (0 === \mb_strlen($detail, 'utf-8')) {
+        if (0 === mb_strlen($detail, 'utf-8')) {
             return $message;
         }
 
         $string = $detail;
 
-        $extraDetail = $error->getExtraDetail();
-        if (\mb_strlen($extraDetail, 'utf-8') > 0) {
+        $extraDetail = $jobError->getExtraDetail();
+        if (mb_strlen($extraDetail, 'utf-8') > 0) {
             $string .= ' (' . $extraDetail . ')';
         }
 
